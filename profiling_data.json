@@ -1,0 +1,48 @@
+{
+    "/Users/sam/gitclones/HeatProfiler/heatprofiler.py": {
+        "test_function": {
+            "55": {
+                "cumulative_time": 0,
+                "calls": 0,
+                "time_per_call": 0
+            },
+            "56": {
+                "cumulative_time": 0.0019381046295166016,
+                "calls": 1000,
+                "time_per_call": 1.9381046295166015e-06
+            },
+            "57": {
+                "cumulative_time": 0.0019350051879882812,
+                "calls": 999,
+                "time_per_call": 1.9369421301183997e-06
+            },
+            "58": {
+                "cumulative_time": 0,
+                "calls": 0,
+                "time_per_call": 0
+            }
+        },
+        "test_function_2": {
+            "64": {
+                "cumulative_time": 0,
+                "calls": 0,
+                "time_per_call": 0
+            },
+            "65": {
+                "cumulative_time": 0.001878976821899414,
+                "calls": 1000,
+                "time_per_call": 1.8789768218994141e-06
+            },
+            "66": {
+                "cumulative_time": 0.0018758773803710938,
+                "calls": 999,
+                "time_per_call": 1.8777551355066003e-06
+            },
+            "67": {
+                "cumulative_time": 0,
+                "calls": 0,
+                "time_per_call": 0
+            }
+        }
+    }
+}

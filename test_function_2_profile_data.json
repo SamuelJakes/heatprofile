@@ -1,0 +1,26 @@
+{
+    "file": "/Users/sam/gitclones/HeatProfiler/heatprofiler.py",
+    "function": "test_function_2",
+    "lines": {
+        "50": {
+            "cumulative_time": 0,
+            "calls": 0,
+            "time_per_call": 0
+        },
+        "51": {
+            "cumulative_time": 0.0008339881896972656,
+            "calls": 1000,
+            "time_per_call": 8.339881896972657e-07
+        },
+        "52": {
+            "cumulative_time": 0.0008320808410644531,
+            "calls": 999,
+            "time_per_call": 8.329137548192724e-07
+        },
+        "53": {
+            "cumulative_time": 0,
+            "calls": 0,
+            "time_per_call": 0
+        }
+    }
+}
