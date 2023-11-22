@@ -4,26 +4,44 @@ import sys
 import linecache
 import inspect
 from collections import defaultdict
-
 def heatprofile(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        timings = defaultdict(lambda: [0, 0, 0])  # [cumulative_time, call_count, last_time_called]
+        timings = defaultdict(lambda: [0, 0, None])  # [cumulative_time, call_count, last_time_started]
+        last_line_no = [None]
+        call_depth = [0]  # Track the call depth
 
         def trace_func(frame, event, arg):
-            if event == "line":
+            if event == "call":
+                call_depth[0] += 1
+            elif event == "return":
+                call_depth[0] -= 1
+
+            if event == "line" and call_depth[0] == 1:
                 line_no = frame.f_lineno
                 now = time.time()
-                if line_no in timings:
-                    elapsed = now - timings[line_no][2]
-                    timings[line_no][0] += elapsed
-                    timings[line_no][1] += 1
-                timings[line_no][2] = now
-            return trace_func
 
+                # Update timings for the last executed line
+                if last_line_no[0] is not None and last_line_no[0] in timings:
+                    elapsed = now - timings[last_line_no[0]][2]
+                    timings[last_line_no[0]][0] += elapsed  # Update cumulative time
+                    timings[last_line_no[0]][1] += 1        # Increment call count
+
+                # Record the start time for the current line
+                timings[line_no][2] = now
+                last_line_no[0] = line_no
+
+            return trace_func
+        
         sys.settrace(trace_func)
         result = func(*args, **kwargs)
         sys.settrace(None)
+
+        now = time.time()
+        if last_line_no[0] is not None and last_line_no[0] in timings:
+            elapsed = now - timings[last_line_no[0]][2]
+            timings[last_line_no[0]][0] += elapsed
+            timings[last_line_no[0]][1] += 1
 
         # Find the maximum time spent on a single line
         total_time = sum(timing[0] for timing in timings.values())
@@ -81,3 +99,4 @@ def heatprofile(func):
         return result
 
     return wrapper
+
