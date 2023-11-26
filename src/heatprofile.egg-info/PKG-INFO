@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: heatprofile
-Version: 0.0.3
+Version: 0.0.5
 Summary: A simple tool for giving immediate visual feedback on the hotspots in your code.
 Author-email: Samuel Jakes <sampcjakes@gmail.com>
 Project-URL: Homepage, https://github.com/SamuelJakes/heatprofile
