@@ -11,7 +11,7 @@
 - **Dynamic Column Widths**: Adjusts column widths based on the length of the source code lines, ensuring readability.
 
 ## Example Output
-![image info](./images/example_output.png)
+![image info](https://github.com/SamuelJakes/heatprofile/blob/main/images/example_output.png)
 ## Installation
 
 To use `HeatProfile`, simply copy the `heatprofile.py` file to your project directory.

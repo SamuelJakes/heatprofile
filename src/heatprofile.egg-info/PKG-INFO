@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: heatprofile
-Version: 0.0.1
+Version: 0.0.3
 Summary: A simple tool for giving immediate visual feedback on the hotspots in your code.
 Author-email: Samuel Jakes <sampcjakes@gmail.com>
 Project-URL: Homepage, https://github.com/SamuelJakes/heatprofile
@@ -24,6 +24,8 @@ License-File: LICENSE
 - **Threshold-Based Coloring**: Lines with execution times significantly lower than the maximum are displayed with a white background, ensuring clarity in highlighting performance-critical areas.
 - **Dynamic Column Widths**: Adjusts column widths based on the length of the source code lines, ensuring readability.
 
+## Example Output
+![image info](https://github.com/SamuelJakes/heatprofile/blob/main/images/example_output.png)
 ## Installation
 
 To use `HeatProfile`, simply copy the `heatprofile.py` file to your project directory.

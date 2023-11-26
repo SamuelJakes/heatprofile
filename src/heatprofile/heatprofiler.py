@@ -1,17 +1,29 @@
 import time
 import functools
 import sys
-import linecache
 import inspect
 from collections import defaultdict
+import psutil
+import os
+
+def get_current_memory_usage():
+    process = psutil.Process(os.getpid())
+    return process.memory_info().rss / (1024 * 1024)
+
+
 def heatprofile(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        timings = defaultdict(lambda: [0, 0, None])  # [cumulative_time, call_count, last_time_started]
-        last_line_no = [None]
+        timings = defaultdict(lambda: [0, 0, 0])  # [cumulative_time, call_count, memory_usage]
+        
+        last_line_no = None
+        last_time_started = time.time()
+        last_memory_usage = get_current_memory_usage()
+
         call_depth = [0]  # Track the call depth
 
         def trace_func(frame, event, arg):
+            nonlocal last_line_no, last_time_started, last_memory_usage
             if event == "call":
                 call_depth[0] += 1
             elif event == "return":
@@ -20,16 +32,20 @@ def heatprofile(func):
             if event == "line" and call_depth[0] == 1:
                 line_no = frame.f_lineno
                 now = time.time()
-
+                current_memory = get_current_memory_usage()
                 # Update timings for the last executed line
-                if last_line_no[0] is not None and last_line_no[0] in timings:
-                    elapsed = now - timings[last_line_no[0]][2]
-                    timings[last_line_no[0]][0] += elapsed  # Update cumulative time
-                    timings[last_line_no[0]][1] += 1        # Increment call count
+                if last_line_no is not None:
+
+                    elapsed = now - last_time_started
+                    memory_increase = current_memory - last_memory_usage
+                    timings[last_line_no][0] += elapsed  # Update cumulative time
+                    timings[last_line_no][1] += 1        # Increment call count
+                    timings[last_line_no][2] += memory_increase  # Update memory usage
 
                 # Record the start time for the current line
-                timings[line_no][2] = now
-                last_line_no[0] = line_no
+                last_time_started = now
+                last_memory_usage = current_memory
+                last_line_no = line_no
 
             return trace_func
         
@@ -38,10 +54,13 @@ def heatprofile(func):
         sys.settrace(None)
 
         now = time.time()
-        if last_line_no[0] is not None and last_line_no[0] in timings:
-            elapsed = now - timings[last_line_no[0]][2]
-            timings[last_line_no[0]][0] += elapsed
-            timings[last_line_no[0]][1] += 1
+        current_memory = get_current_memory_usage() 
+        if last_line_no is not None:
+            elapsed = now - last_time_started
+            memory_increase = current_memory - last_memory_usage
+            timings[last_line_no][0] += elapsed  # Update cumulative time
+            timings[last_line_no][1] += 1        # Increment call count
+            timings[last_line_no][2] += memory_increase  # Update memory usage
 
         # Find the maximum time spent on a single line
         total_time = sum(timing[0] for timing in timings.values())
@@ -60,8 +79,8 @@ def heatprofile(func):
         print(f"Total function time: {total_time/1000:.2f}s")
         print("-" * 120)
 
-        header_format = "{:<4} {:<" + str(source_code_column_width) + "} {:>20} {:>15} {:>15}"
-        print(header_format.format("Line", "Source Code", "Cumulative Time(s)", "Call Count", "Time/Call(s)"))
+        header_format = "{:<4} {:<" + str(source_code_column_width) + "} {:>20} {:>15} {:>15} {:>18}"
+        print(header_format.format("Line", "Source Code", "Cumulative Time(s)", "Call Count", "Time/Call(s)", "Mem Usage(MB)"))
         print("-" * 120)
 
         for i, line in enumerate(source_lines, start=func.__code__.co_firstlineno):
@@ -69,7 +88,7 @@ def heatprofile(func):
             escaped_line = line.rstrip().replace("{", "{{").replace("}", "}}")
 
             time_data = timings.get(i, [0, 0, 0])
-            cumulative_time, call_count, _ = time_data
+            cumulative_time, call_count, mem_usage = time_data
             time_per_call = cumulative_time / call_count if call_count else 0
 
             # Determine the color intensity based on the maximum line time
@@ -85,13 +104,12 @@ def heatprofile(func):
             else:
                 green_blue_intensity = 255  # Default value when max_line_time is 0
 
-            color_code = f"\033[48;2;255;{green_blue_intensity};{green_blue_intensity}m"
-
-            line_format = f"{color_code}{i:4} {escaped_line:<{source_code_column_width}} {cumulative_time:20.6f} {call_count:15} {time_per_call:15.6f}\033[0m"
+            if call_count == 0:
+                color_code = "\033[48;2;169;169;169m\033[30m" 
+            else:
+                color_code = f"\033[48;2;255;{green_blue_intensity};{green_blue_intensity}m"
+            line_format = f"{color_code}{i:4} {escaped_line:<{source_code_column_width}} {cumulative_time:20.6f} {call_count:15} {time_per_call:15.6f} {mem_usage:15.2f} MB\033[0m"
             print(line_format)
-
-
-
 
         print("-" * 120)
         print('\n')
@@ -99,4 +117,3 @@ def heatprofile(func):
         return result
 
     return wrapper
-

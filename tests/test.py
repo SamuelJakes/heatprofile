@@ -5,6 +5,8 @@ def test_func():
     a = 1
     b = 2
     c = 3
+    large_string = " " * (10 * 1024 * 1024) # 10 MB line
+
     for _ in range(2):
         a += 1
         time.sleep(0.1)
