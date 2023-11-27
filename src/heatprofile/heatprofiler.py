@@ -6,6 +6,13 @@ from collections import defaultdict
 import psutil
 import os
 
+# TODO
+# - Add support for profiling multiple functions at once
+# - Add support for profiling multiple files at once
+# - Add support for saving the profiling data to a file
+# - Add support for opening the profiling data in a browser
+# - Add support for specifying the call depth to profile
+
 def get_current_memory_usage():
     process = psutil.Process(os.getpid())
     return process.memory_info().rss / (1024 * 1024)
@@ -79,7 +86,7 @@ def heatprofile(func=None, color_focus="time"):
             print("-" * 120)
             print("Function name: ", func.__name__)
             print("Function location: ", file_name + ":" + str(func.__code__.co_firstlineno + 1))
-            print(f"Total function time: {total_time/1000:.2f}s")
+            print(f"Total function time: {total_time:.2f}s")
             print("-" * 120)
 
             header_format = "{:<4} {:<" + str(source_code_column_width) + "} {:>20} {:>15} {:>15} {:>18}"
