@@ -1,9 +1,12 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "heatprofile"
-version = "0.0.5"
+version = "0.0.10"
+dependencies = [
+    "psutil>=5.9.6"
+]
 authors = [
   { name="Samuel Jakes", email="sampcjakes@gmail.com" },
 ]

@@ -80,7 +80,7 @@ def heatprofile(func=None, color_focus="time"):
 
             # Calculate the maximum line length
             max_line_length = max(len(line.rstrip()) for line in source_lines)
-            source_code_column_width = max(max_line_length, 100)
+            source_code_column_width = max(max_line_length, 60)
 
             print('\n')
             print("-" * 120)
@@ -135,3 +135,4 @@ def heatprofile(func=None, color_focus="time"):
         return decorator
     else:
         return decorator(func)
+
