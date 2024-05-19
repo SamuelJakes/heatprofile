@@ -1,6 +1,7 @@
 from heatprofile import heatprofile
+import time
 
-@heatprofile
+@heatprofile(send_to_browser=True)
 def test_func():
     a = 1
     b = 2
